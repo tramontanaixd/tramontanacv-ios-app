@@ -1,0 +1,32 @@
+PODS:
+  - CocoaAsyncSocket (7.6.3)
+  - OSCKit (0.3.5):
+    - CocoaAsyncSocket (~> 7.3)
+  - PocketSocket (1.0.1):
+    - PocketSocket/Client (= 1.0.1)
+    - PocketSocket/Core (= 1.0.1)
+    - PocketSocket/Server (= 1.0.1)
+  - PocketSocket/Client (1.0.1):
+    - PocketSocket/Core
+  - PocketSocket/Core (1.0.1)
+  - PocketSocket/Server (1.0.1):
+    - PocketSocket/Client
+
+DEPENDENCIES:
+  - OSCKit
+  - PocketSocket
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - CocoaAsyncSocket
+    - OSCKit
+    - PocketSocket
+
+SPEC CHECKSUMS:
+  CocoaAsyncSocket: eafaa68a7e0ec99ead0a7b35015e0bf25d2c8987
+  OSCKit: 4470dbd30bc792dcf66dc4e7b5d1ec7174add33c
+  PocketSocket: 9c6867d66fb4f962af96b9b07f4b45bb561b2c2a
+
+PODFILE CHECKSUM: 65f9286f49dd2446a135770b92ff282b2a51ec5b
+
+COCOAPODS: 1.5.3
