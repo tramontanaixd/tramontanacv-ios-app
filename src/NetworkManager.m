@@ -129,18 +129,43 @@
             NSLog(@"received %@",keyDirective);
             
             //**** ACTUATE ****//
-            if([keyDirective isEqualToString:@"makeVibrate"])
+            NSDictionary *dictTmp;
+            if([keyDirective isEqualToString:@"lockAE"])
             {
+                dictTmp = @{@"m":keyDirective};
                 
+            }else if([keyDirective isEqualToString:@"unlockAE"])
+            {
+                dictTmp = @{@"m":keyDirective};
             }
-            
-            
-            
+            else if([keyDirective isEqualToString:@"save"])
+            {
+                dictTmp = @{@"m":keyDirective};
+            }
+            else if([keyDirective isEqualToString:@"captureBg"])
+            {
+                dictTmp = @{@"m":keyDirective};
+            }
+            else if([keyDirective isEqualToString:@"blur"] && [[results allKeys] containsObject:@"val"])
+            {
+                dictTmp = @{@"m":keyDirective,@"v":[results objectForKey:@"val"]};
+            }
+            else if([keyDirective isEqualToString:@"threshold"]  && [[results allKeys] containsObject:@"val"])
+            {
+                dictTmp = @{@"m":keyDirective,@"v":[results objectForKey:@"val"]};
+            }
+            else if([keyDirective isEqualToString:@"blobs"]  && [[results allKeys] containsObject:@"max"]  && [[results allKeys] containsObject:@"min"]  && [[results allKeys] containsObject:@"num"])
+            {
+                dictTmp = @{@"m":keyDirective,@"max":[results objectForKey:@"max"],@"min":[results objectForKey:@"min"],@"num":[results objectForKey:@"num"]};
+            }
+            if (dictTmp !=NULL) {
+                 [[NSNotificationCenter defaultCenter] postNotificationName:@"controlMsgReceived" object: self userInfo:dictTmp];
+            }
         }
         
         else{
             
-            [webSocket send:@"{\"m\":\"error\",\"type\":\"missing MESSAGE\"}"];
+            [webSocket send:@"{\"m\":\"error\",\"type\":\"missing Directive\"}"];
             return;
         }
         /* proceed with results as you like; the assignment to

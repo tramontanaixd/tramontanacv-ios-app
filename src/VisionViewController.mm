@@ -44,6 +44,8 @@
     //CONNECT DETECT SWITCH
     [_detectFacesSwitch addTarget:self action:@selector(changeSwitch:) forControlEvents:UIControlEventValueChanged];
     
+    //Control Received from WS
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(controlMessageReceived:) name:@"controlMsgReceived" object:nil];
 }
 - (IBAction)openVC:(id)sender{
     [super openVC:sender];
@@ -156,7 +158,16 @@
             break;
     }
 }
-
+-(IBAction)changeAELock:(id)sender{
+    if([sender isOn])
+    {
+        of_pointer->setLockAE(true);
+    }
+    else
+    {
+        of_pointer->setLockAE(false);
+    }
+}
 - (void)changeSwitch:(id)sender{
     if([sender isOn]){
         [self morphUIFaceDetect];
@@ -202,6 +213,11 @@
     [_blurSlider setUserInteractionEnabled:NO];
     of_pointer->blur = 0.0;
     
+    //DISABLE UI ELEMENTS
+    [_aeLockSwitch setUserInteractionEnabled:NO];
+    [_aeLockSwitch setOn:NO animated:YES];
+    of_pointer->setLockAE(false);
+    
 }
 -(void)morphUIBlobDetect{
     of_pointer->setFaceDetect(false);
@@ -237,6 +253,60 @@
     //ENABLE BLUR
     [_blurSlider setUserInteractionEnabled:YES];
     of_pointer->blur            = (int) _blurSlider.value;
+    
+    //ENABLE UI ELEMENTS
+    [_aeLockSwitch setUserInteractionEnabled:YES];
+    
+}
+-(void) controlMessageReceived:(NSNotification*)notification{
+    NSDictionary* dict = notification.userInfo;
+    
+    if([[dict objectForKey:@"m"] isEqualToString:@"lockAE"])
+    {
+        of_pointer->setLockAE(true);
+        [_aeLockSwitch setOn:YES];
+    }
+    else if([[dict objectForKey:@"m"] isEqualToString:@"unlockAE"])
+    {
+        of_pointer->setLockAE(false);
+        [_aeLockSwitch setOn:NO];
+    }
+    else if([[dict objectForKey:@"m"] isEqualToString:@"captureBg"])
+    {
+        [self captureBackground:nil];
+    }
+    else if([[dict objectForKey:@"m"] isEqualToString:@"blur"])
+    {
+        float val = [[dict objectForKey:@"v"] floatValue];
+        [_blurSlider setValue: val];
+        of_pointer->blur = val;
+    }
+    else if([[dict objectForKey:@"m"] isEqualToString:@"threshold"])
+    {
+        int val = [[dict objectForKey:@"v"] intValue];
+        [_thresholdSlider setValue: val];
+        [_thresholdLabel setText:[NSString stringWithFormat:@"%d",val]];
+        of_pointer->threshold = val;
+    }
+    else if([[dict objectForKey:@"m"] isEqualToString:@"blobs"])
+    {
+        of_pointer->min_blob_size   = [[dict objectForKey:@"min"] intValue];
+        [_minBlobSizeLabel setText:[NSString stringWithFormat:@"%d",of_pointer->min_blob_size]];
+        [_minBlobSizeSlider setValue:of_pointer->min_blob_size];
+        
+        of_pointer->max_blob_size = [[dict objectForKey:@"max"] intValue];
+        [_maxBlobSizeLabel setText:[NSString stringWithFormat:@"%d",of_pointer->max_blob_size]];
+        [_maxBlobSizeSlider setValue:of_pointer->max_blob_size];
+        
+        of_pointer->max_num_blobs =[[dict objectForKey:@"num"] intValue];
+        [_maxNumBlobsLabel setText:[NSString stringWithFormat:@"%d",of_pointer->max_num_blobs]];
+        [_maxNumBlobsSlider setValue:of_pointer->max_num_blobs];
+    }
+    else if([[dict objectForKey:@"m"] isEqualToString:@"save"])
+    {
+        of_pointer->saveSnapshot();
+    }
+
 }
 
 @end

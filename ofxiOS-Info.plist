@@ -38,5 +38,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>tramontanaCV would like to access the photo library to save the snapshot.</string>
 </dict>
 </plist>

@@ -27,8 +27,8 @@
 -(IBAction)captureBackground:(id)sender;
 -(IBAction)setIsDilate:(id)sender;
 -(void)setCapturedBackgroundWith:(UIImage*)bgNewImage;
-@property (strong,nonatomic) IBOutlet UIButton* aeLockButton;
 @property (strong,nonatomic) IBOutlet UISwitch* aeLockSwitch;
+-(IBAction)changeAELock:(id)sender;
 
 //sliders
 -(IBAction)valueChanged:(id)sender;
@@ -61,6 +61,9 @@
 //pixelate
 @property(strong,nonatomic)IBOutlet UISlider* pixelateSlider;
 @property(strong,nonatomic)IBOutlet UILabel*  pixelateLabel;
+
+//control received via WS
+-(void) controlMessageReceived:(NSNotification*)notification;
 
 
 

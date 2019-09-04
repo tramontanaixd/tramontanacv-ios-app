@@ -45,7 +45,7 @@ public:
     ofFbo fbo;
     
     //DEBUG IMAGE
-    ofImage debugImage;
+   // ofImage debugImage;
     
     //COMPUTER VISION
     int threshold = 128;    //number 0-255
@@ -73,6 +73,7 @@ public:
     ofxCvHaarFinder finder;
     bool isHaarActive = false;
     void setFaceDetect(bool faceDetect);
+
     
     //INTERFACE
     void syncWithVisionTab(int tagIndex);
@@ -83,12 +84,17 @@ public:
     void removeBackground();
     UIImage* UIImageFromOFImage( ofImage & img );
     
-    void setLockAE(bool locked);
-    
     UIImage* UIImageFromOFImage( ofxCvGrayscaleImage img );
     UIImage* convertBitmapRGBA8ToUIImage(unsigned char * bufferData,float wtmp,float htmp);
     
+    int currentSizeSnapshotButton = 22;
+    const int normalSizeSnapshotButton = 22;
+    ofImage imgToSave;
+    void saveSnapshot();
+    
+    //CAMERA CONTROLS
     void reFocus(float x, float y);
+    void setLockAE(bool locked);
     
     //COMMUNICATION
     float timeSinceLastWSSent   = 0;
@@ -97,6 +103,8 @@ public:
     float intervalSendOSC       = 0.5;
     int   sendItem              = BB;
     void setSendItem(int switchItem);
+    
+
 };
 
 

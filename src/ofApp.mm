@@ -41,7 +41,7 @@ void ofApp::setup(){
     
     
     //DEBUG IMAGE
-    debugImage.load("P1010044.JPG");
+    //debugImage.load("P1010044.JPG");
     
     //SETUP GRABBER
     videoFeed.setup(VGRAB_W, VGRAB_H, OF_PIXELS_BGRA);
@@ -59,6 +59,9 @@ void ofApp::setup(){
     //HAAR FINDER
     finder.setup("haarcascade_frontalface_alt.xml");
     
+    ofSetCircleResolution(128);
+//    ofEnableAntiAliasing();
+    ofSetFrameRate(30);
     
 }
 
@@ -205,6 +208,10 @@ void ofApp::update(){
         fbo.end();
     }
    
+    if(currentSizeSnapshotButton>normalSizeSnapshotButton)
+    {
+        currentSizeSnapshotButton = currentSizeSnapshotButton-(currentSizeSnapshotButton*0.05);
+    }
     
 }
 
@@ -225,63 +232,16 @@ void ofApp::draw(){
         return;
     }
     fbo.draw(0, 0,frameW,frameH);
-    return;
-    switch (indexVizState) {
-        case 0:
-            
-            if(blur>1)
-            {
-                rawImage.draw(0, 0);
-            }
-            else
-            {
-                videoFeed.draw(0, 0);
-            }
-            break;
-        case 1:
-            
-            //grayImage.draw(0,0);
-            fbo.draw(0, 0);
-            if(isBackgroundCaptured)
-            {
-                
-            }
-            else
-            {
-                //grayImage.draw(0, 0);
-            }
-            break;
-        case 2:
-            thresholdImage.draw(0,0);
-            break;
-        case 3:
-            thresholdImage.draw(0,0);
-            ofSetHexColor(0xff00ff);
-            ofSetLineWidth(2.0);
-            ofNoFill();
-            for (int i=0; i<contourFinder.nBlobs; i++){
-                ofDrawRectangle( contourFinder.blobs[i].boundingRect);
-                
-                //ofBeginShape();
-                ofxCvBlob bTmp= contourFinder.blobs[i];
-                bTmp.draw();
-                //                for(int k=0;k< bTmp.nPts;k++)
-                //                {
-                //                    ofVertex(  );
-                //
-                //
-                //                }
-                //                ofEndShape();
-            }
-            break;
-        case 4:
-            
-            break;
-        default:
-            break;
-    }
-}
+    
+    //BUTTON
+    ofFill();
+    ofSetColor(255, 110);
+    ofDrawCircle(frameW-115, frameH-80, currentSizeSnapshotButton);
+    ofDrawCircle(frameW-115, frameH-80, currentSizeSnapshotButton-3);
 
+    ofSetColor(255,255);
+}
+#pragma mark INTERFACE METHODS
 //--------------------------------------------------------------
 void ofApp::openVC(int idn){
     //OPEN VIEW CONTROLLER
@@ -341,15 +301,27 @@ void ofApp::collapseVCs(){
 void ofApp::syncWithVisionTab(int tagIndex){
     indexVizState = tagIndex;
 }
+#pragma mark CAMERA CONTROL METHODS
 //--------------------------------------------------------------
 void ofApp::reFocus(float x, float y)
 {
     videoFeed.getGrabber<ofxiOSVideoGrabber>()->setAutofocusWithPointOfInterest(ofPoint(x,y));
 }
 //--------------------------------------------------------------
+void ofApp::setLockAE(bool locked){
+    if(locked)
+    {
+        videoFeed.getGrabber<ofxiOSVideoGrabber>()->lockExposure();
+    }
+    else{
+         videoFeed.getGrabber<ofxiOSVideoGrabber>()->unlockExposure();
+    }
+}
+//--------------------------------------------------------------
 void ofApp::setSendItem(int switchItem){
     sendItem = switchItem;
 }
+#pragma mark OTHER OPENFRAMEWORKS METHODS
 //--------------------------------------------------------------
 void ofApp::exit(){
     
@@ -357,7 +329,13 @@ void ofApp::exit(){
 
 //--------------------------------------------------------------
 void ofApp::touchDown(ofTouchEventArgs & touch){
-    
+    if(!areVCsOpen)
+    {
+        if(ofDist(touch.x, touch.y, frameW-110, frameH-80)<normalSizeSnapshotButton)
+        {
+            saveSnapshot();
+        }
+    }
 }
 
 //--------------------------------------------------------------
@@ -413,6 +391,20 @@ void ofApp::gotFocus(){
 void ofApp::gotMemoryWarning(){
     
 }
+#pragma mark OTHER METHODS
+//--------------------------------------------------------------
+void ofApp::saveSnapshot(){
+    //TAKE SNAPSHOP
+    ofPixels pixels;
+    fbo.readToPixels(pixels);
+    
+    imgToSave.setFromPixels(pixels);
+    UIImage *imgTmp = UIImageFromOFImage(imgToSave);
+    UIImageWriteToSavedPhotosAlbum(imgTmp, nil, nil, nil);
+    
+    //START ANIMATION BUTTON
+    currentSizeSnapshotButton = 50;
+}
 //--------------------------------------------------------------
 void ofApp::captureBackground(){
     backgroundImage.setFromPixels(rawImage.getPixels());
@@ -460,8 +452,9 @@ UIImage* ofApp::UIImageFromOFImage( ofImage & img ){
     CGColorSpaceRef colorSpaceRef;
     CGImageRef imageRef;
     ofxCvColorImage bgImageTmp;
-    bgImageTmp.setFromPixels(img.getPixels());
-    GLubyte *rawImageDataBuffer =  (unsigned char*)(bgImageTmp.getCvImage()->imageData);
+    //bgImageTmp.setFromPixels(img.getPixels().getData(),width,height);
+    
+    GLubyte *rawImageDataBuffer =  (unsigned char*)(img.getPixels().getData());
     dataProviderRef = CGDataProviderCreateWithData(NULL,  rawImageDataBuffer/*&img.getPixels()*rawImageDataBuffer*/, rawImageDataLength, nil);
     colorSpaceRef = CGColorSpaceCreateDeviceRGB();
     imageRef = CGImageCreate(width, height, bitsPerColorComponent, bitsPerColorComponent * nrOfColorComponents, width * nrOfColorComponents, colorSpaceRef, bitmapInfo, dataProviderRef, NULL, interpolateAndSmoothPixels, renderingIntent);
@@ -469,15 +462,7 @@ UIImage* ofApp::UIImageFromOFImage( ofImage & img ){
     return uimg;
     
 }
-void ofApp::setLockAE(bool locked){
-    if(locked)
-    {
-        //videoFeed->getGrabber<ofxiOSVideoGrabber>()->();
-    }
-    else{
-        // videoFeed->getGrabber<ofxiOSVideoGrabber>()->unlockExposure();
-    }
-}
+
 //--------------------------------------------------------------
 UIImage* ofApp::UIImageFromOFImage(ofxCvGrayscaleImage img ){
     int width = img.getWidth();
