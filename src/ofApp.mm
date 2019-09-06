@@ -44,7 +44,9 @@ void ofApp::setup(){
     //debugImage.load("P1010044.JPG");
     
     //SETUP GRABBER
+    videoFeed.setDeviceID(cameraID);
     videoFeed.setup(VGRAB_W, VGRAB_H, OF_PIXELS_BGRA);
+    
     
     //ALLOCATE IMAGES FOR CV
     rawImage.allocate(VGRAB_W, VGRAB_H);
@@ -316,6 +318,19 @@ void ofApp::setLockAE(bool locked){
     else{
          videoFeed.getGrabber<ofxiOSVideoGrabber>()->unlockExposure();
     }
+}
+//--------------------------------------------------------------
+void ofApp::setCameraID(int newCameraID)
+{
+    if(cameraID != newCameraID)
+    {
+        cameraID = newCameraID;
+        videoFeed.close();
+        videoFeed.setDeviceID(newCameraID);
+        videoFeed.setup(VGRAB_W, VGRAB_H, OF_PIXELS_BGRA);
+    }
+    
+    
 }
 //--------------------------------------------------------------
 void ofApp::setSendItem(int switchItem){

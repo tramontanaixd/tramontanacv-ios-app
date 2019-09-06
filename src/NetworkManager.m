@@ -154,6 +154,10 @@
             {
                 dictTmp = @{@"m":keyDirective,@"v":[results objectForKey:@"val"]};
             }
+            else if([keyDirective isEqualToString:@"cam"]  && [[results allKeys] containsObject:@"val"])
+            {
+                dictTmp = @{@"m":keyDirective,@"v":[results objectForKey:@"val"]};
+            }
             else if([keyDirective isEqualToString:@"blobs"]  && [[results allKeys] containsObject:@"max"]  && [[results allKeys] containsObject:@"min"]  && [[results allKeys] containsObject:@"num"])
             {
                 dictTmp = @{@"m":keyDirective,@"max":[results objectForKey:@"max"],@"min":[results objectForKey:@"min"],@"num":[results objectForKey:@"num"]};

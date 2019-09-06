@@ -17,6 +17,7 @@
                 <outlet property="blurSlider" destination="lSj-7V-HvY" id="zrk-Vq-rab"/>
                 <outlet property="collapsedOverlay" destination="2Vq-nC-yvb" id="sCJ-br-l5t"/>
                 <outlet property="detectFacesSwitch" destination="azi-3Z-vmZ" id="R8i-wO-YSF"/>
+                <outlet property="frontBackCameraControl" destination="9jk-iZ-Aj5" id="o57-uC-6jw"/>
                 <outlet property="maxBlobSizeLabel" destination="Rr4-a1-w4N" id="Uxk-c5-ZbO"/>
                 <outlet property="maxBlobSizeSlider" destination="my5-cs-IrU" id="y8w-gW-a8c"/>
                 <outlet property="maxNumBlobsLabel" destination="yUx-ZJ-ab9" id="D8o-Gl-Ads"/>
@@ -176,7 +177,7 @@
                     <color key="backgroundColor" red="0.90980392160000001" green="0.90980392160000001" blue="0.90980392160000001" alpha="1" colorSpace="calibratedRGB"/>
                 </view>
                 <view contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OYw-ec-fS1" userLabel="Original">
-                    <rect key="frame" x="15" y="66" width="375" height="163"/>
+                    <rect key="frame" x="15" y="66" width="375" height="209"/>
                     <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="0" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Roj-ew-mMz">
@@ -202,14 +203,14 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="Detect Faces (beta)" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="g7l-cr-4l5">
-                            <rect key="frame" x="8" y="131" width="112" height="32"/>
+                            <rect key="frame" x="8" y="176" width="112" height="32"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <fontDescription key="fontDescription" type="system" pointSize="12"/>
                             <color key="textColor" red="1" green="1" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="azi-3Z-vmZ">
-                            <rect key="frame" x="157" y="132" width="49" height="31"/>
+                            <rect key="frame" x="157" y="177" width="49" height="31"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="tintColor" red="0.24106314779999999" green="0.61956769229999997" blue="0.84837716819999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                             <color key="onTintColor" red="0.24106314779999999" green="0.61956769229999997" blue="0.84837716819999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -230,6 +231,19 @@
                                 <action selector="changeAELock:" destination="-1" eventType="valueChanged" id="AFE-XF-7au"/>
                             </connections>
                         </switch>
+                        <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="9jk-iZ-Aj5">
+                            <rect key="frame" x="90" y="129" width="195" height="29"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                            <color key="backgroundColor" name="controlHighlightColor" catalog="System" colorSpace="catalog"/>
+                            <segments>
+                                <segment title="Back Camera"/>
+                                <segment title="Front Camera"/>
+                            </segments>
+                            <color key="tintColor" red="0.24106314779999999" green="0.61956769229999997" blue="0.84837716819999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <connections>
+                                <action selector="changeCamera:" destination="-1" eventType="valueChanged" id="z1R-3f-U7G"/>
+                            </connections>
+                        </segmentedControl>
                     </subviews>
                     <color key="backgroundColor" red="0.90980392160000001" green="0.90980392160000001" blue="0.90980392160000001" alpha="1" colorSpace="calibratedRGB"/>
                 </view>

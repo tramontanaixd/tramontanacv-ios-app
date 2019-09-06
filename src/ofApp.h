@@ -59,6 +59,8 @@ public:
     
     
     ofVideoGrabber videoFeed;
+    int cameraID = 0;
+    void setCameraID(int newCameraID);
     
     ofImage workingImage;
     ofImage colorBackground;

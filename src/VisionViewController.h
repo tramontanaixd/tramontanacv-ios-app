@@ -24,11 +24,14 @@
 @property (strong, nonatomic) UIImage* bg;
 @property (strong,nonatomic)IBOutlet UIImageView* bgShow;
 @property (assign)BOOL isBackgroundSet;
+@property (strong,nonatomic)IBOutlet UISegmentedControl* frontBackCameraControl;
+-(IBAction)changeCamera:(id)sender;
 -(IBAction)captureBackground:(id)sender;
 -(IBAction)setIsDilate:(id)sender;
 -(void)setCapturedBackgroundWith:(UIImage*)bgNewImage;
 @property (strong,nonatomic) IBOutlet UISwitch* aeLockSwitch;
 -(IBAction)changeAELock:(id)sender;
+
 
 //sliders
 -(IBAction)valueChanged:(id)sender;

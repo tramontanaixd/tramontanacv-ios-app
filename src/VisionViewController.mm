@@ -76,6 +76,10 @@
     of_pointer->syncWithVisionTab(_selectedIndex);
     [self.view addSubview:[_vViews objectAtIndex:_selectedIndex]];
 }
+-(IBAction)changeCamera:(id)sender{
+    printf("%d\n",(int)_frontBackCameraControl.selectedSegmentIndex);
+    of_pointer->setCameraID((int)_frontBackCameraControl.selectedSegmentIndex);
+}
 -(IBAction)captureBackground:(id)sender{
     if(!_isBackgroundSet)
     {
