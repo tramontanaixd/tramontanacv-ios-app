@@ -233,6 +233,7 @@
     else if(textField == _websocketFrequencyField)
     {
         NSLog(@"frequency port");
+        //LIMIT TO 15Hz
         of_pointer_CVC->intervalSendWS = 1/([textField.text intValue]);
     }
     return YES;

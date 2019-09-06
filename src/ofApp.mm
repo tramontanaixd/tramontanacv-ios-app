@@ -27,7 +27,6 @@ void ofApp::setup(){
     vvc.idn = VVC_ID;
     
     //COMMUNICATION VIEW CONTROLLER
-    
     cvc = [[CommunicationViewController alloc] initWithNibName:@"CommunicationViewController" bundle:nil];
     [cvc.view setBackgroundColor:[UIColor colorWithRed:0.24 green:0.61 blue:0.84 alpha:1.0]];//61 156 215
     [cvc.view setFrame:CGRectMake(0, ofGetHeight()-collapsedVC, ofGetWidth(), collapsedVC)];
@@ -104,6 +103,7 @@ void ofApp::update(){
         {
             rawImage.blurGaussian((blur%2!=0)?blur:blur+1);
         }
+        //the following line transforms the image to grayscale
         grayImage = rawImage;
         
         if(isBackgroundCaptured && bgGrayImage.bAllocated)
@@ -124,6 +124,7 @@ void ofApp::update(){
         thresholdImage.threshold(threshold);
         contourFinder.findContours(thresholdImage, min_blob_size, max_blob_size, max_num_blobs, true);
         
+        //SEND TO PROCESSING
         if(ofGetElapsedTimef()-timeSinceLastWSSent >intervalSendWS)// || ofGetElapsedTimef()-timeSinceLastOSCSent >intervalSendOSC )
         {
             if(sendItem == BLOBS)
@@ -167,6 +168,7 @@ void ofApp::update(){
             }
         }
         
+        //CREATE THE FRAME TO DISPLAY
         fbo.begin();
         ofClear(255, 255, 255, 255);
         switch (indexVizState) {
@@ -329,8 +331,6 @@ void ofApp::setCameraID(int newCameraID)
         videoFeed.setDeviceID(newCameraID);
         videoFeed.setup(VGRAB_W, VGRAB_H, OF_PIXELS_BGRA);
     }
-    
-    
 }
 //--------------------------------------------------------------
 void ofApp::setSendItem(int switchItem){
@@ -367,7 +367,6 @@ void ofApp::touchUp(ofTouchEventArgs & touch){
         // printf("%f,%f\n",touch.x/ ofGetScreenWidth(),touch.y/ofGetScreenHeight());
         //reFocus(touch.x/ ofGetScreenWidth(),touch.y/ofGetScreenHeight());
     }
-    
     if(cvc.isKeyboardOut)
     {
         if(touch.y<ofGetHeight()-cvc.keyboardHeight)
@@ -379,7 +378,6 @@ void ofApp::touchUp(ofTouchEventArgs & touch){
     {
         collapseVCs();
     }
-    
 }
 
 //--------------------------------------------------------------

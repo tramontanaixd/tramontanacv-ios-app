@@ -232,7 +232,7 @@
                             </connections>
                         </switch>
                         <segmentedControl opaque="NO" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" selectedSegmentIndex="1" translatesAutoresizingMaskIntoConstraints="NO" id="9jk-iZ-Aj5">
-                            <rect key="frame" x="90" y="129" width="195" height="29"/>
+                            <rect key="frame" x="89" y="129" width="195" height="29"/>
                             <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             <color key="backgroundColor" name="controlHighlightColor" catalog="System" colorSpace="catalog"/>
                             <segments>
