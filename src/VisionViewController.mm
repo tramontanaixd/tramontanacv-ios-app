@@ -25,7 +25,7 @@
     
     of_pointer = (ofApp*)ofGetAppPtr();
     
-    _selectedIndex = 0;
+    _selectedIndex = -1;
     
     //MAKE Vision Views transparent and remove them from superview.
     for(int i =0;i<[_vViews count];i++)
@@ -35,9 +35,8 @@
         [[_vViews objectAtIndex:i] setFrame:CGRectMake(0, MARGIN_TOP, (int) [[UIScreen mainScreen] bounds].size.width,(int) [[_vViews objectAtIndex:i] frame].size.height )];
         [[_vViews objectAtIndex:i] removeFromSuperview];
     }
-    [[_vViews objectAtIndex:_selectedIndex] setFrame:CGRectMake(0, MARGIN_TOP, (int) [[UIScreen mainScreen] bounds].size.width*2,(int) [[_vViews objectAtIndex:_selectedIndex] frame].size.height )];
     
-    [self.view addSubview:[_vViews objectAtIndex:_selectedIndex]];
+    
     [self.view setAlpha:1.0];
     _isBackgroundSet = NO;
     
@@ -50,6 +49,13 @@
 - (IBAction)openVC:(id)sender{
     [super openVC:sender];
     [self.view setAlpha:0.95];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if(_selectedIndex == -1)
+        {
+            [self changeView:nil];
+        }
+    });
+   // NSLog(@"width frame %f",((UIView*)[_vViews objectAtIndex:_selectedIndex]).frame.size.width );
 }
 - (IBAction)collapseVC{
     [super collapseVC];
@@ -71,10 +77,19 @@
 }
 
 -(IBAction)changeView:(id)sender{
-    [[_vViews objectAtIndex:_selectedIndex] removeFromSuperview];
-    _selectedIndex = ((UIView*)sender).tag;
+    
+    if(sender == nil)
+    {
+        _selectedIndex = 0;
+    }
+    else
+    {
+        [[_vViews objectAtIndex:_selectedIndex] removeFromSuperview];
+        _selectedIndex = ((UIView*)sender).tag;
+    }
     of_pointer->syncWithVisionTab(_selectedIndex);
     [self.view addSubview:[_vViews objectAtIndex:_selectedIndex]];
+     NSLog(@"width frame %f",((UIView*)[_vViews objectAtIndex:_selectedIndex]).frame.size.width );
 }
 -(IBAction)changeCamera:(id)sender{
     printf("%d\n",(int)_frontBackCameraControl.selectedSegmentIndex);

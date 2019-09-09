@@ -63,7 +63,7 @@ void ofApp::setup(){
     ofSetCircleResolution(128);
 //    ofEnableAntiAliasing();
     ofSetFrameRate(30);
-    
+    printf("width %d,%d height %d %d",ofGetWidth(),frameW,ofGetHeight(), frameH);
 }
 
 //--------------------------------------------------------------
@@ -240,8 +240,8 @@ void ofApp::draw(){
     //BUTTON
     ofFill();
     ofSetColor(255, 110);
-    ofDrawCircle(frameW-115, frameH-80, currentSizeSnapshotButton);
-    ofDrawCircle(frameW-115, frameH-80, currentSizeSnapshotButton-3);
+    ofDrawCircle(ofGetWidth()-30, frameH-80, currentSizeSnapshotButton);
+    ofDrawCircle(ofGetWidth()-30, frameH-80, currentSizeSnapshotButton-3);
 
     ofSetColor(255,255);
 }

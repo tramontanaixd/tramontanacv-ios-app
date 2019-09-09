@@ -22,5 +22,7 @@ int main() {
     ofCreateWindow(settings);
     [NetworkManager sharedManager];
     
+    [UIApplication sharedApplication].idleTimerDisabled = YES;
+    
 	return ofRunApp(new ofApp);
 }
