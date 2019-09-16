@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "Apple Watch Notification center (42mm).png",
+      "filename" : "Default.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Apple Watch Short Look (38mm).png",
+      "filename" : "Default-568h@2x~iphone.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "Apple Watch Short Look (42mm).png",
+      "filename" : "1242x2208-2.png",
       "scale" : "3x"
     }
   ],
