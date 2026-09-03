@@ -1,8 +1,8 @@
 //
 //  SaveAndLoadTextField.h
-//
+//  
 //  Created by Pierluigi Dalla Rosa on 4/18/17.
-//  Copyright © 2017 pierdr. All rights reserved.
+//  AGPL-3.0-only
 //
 
 #import <UIKit/UIKit.h>

@@ -130,11 +130,7 @@
             
             //**** ACTUATE ****//
             NSDictionary *dictTmp;
-            if([keyDirective isEqualToString:@"lockAE"])
-            {
-                dictTmp = @{@"m":keyDirective};
-                
-            }else if([keyDirective isEqualToString:@"unlockAE"])
+            if([keyDirective isEqualToString:@"lockAE"] || [keyDirective isEqualToString:@"unlockAE"] || [keyDirective isEqualToString:@"mCV"] || [keyDirective isEqualToString:@"mFac"])
             {
                 dictTmp = @{@"m":keyDirective};
             }
@@ -154,9 +150,9 @@
             {
                 dictTmp = @{@"m":keyDirective,@"v":[results objectForKey:@"val"]};
             }
-            else if([keyDirective isEqualToString:@"cam"]  && [[results allKeys] containsObject:@"val"])
+            else if([keyDirective isEqualToString:@"cam"]  && [[results allKeys] containsObject:@"id"])
             {
-                dictTmp = @{@"m":keyDirective,@"v":[results objectForKey:@"val"]};
+                dictTmp = @{@"m":keyDirective,@"id":[results objectForKey:@"id"]};
             }
             else if([keyDirective isEqualToString:@"blobs"]  && [[results allKeys] containsObject:@"max"]  && [[results allKeys] containsObject:@"min"]  && [[results allKeys] containsObject:@"num"])
             {

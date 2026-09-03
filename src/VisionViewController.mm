@@ -41,7 +41,15 @@
     _isBackgroundSet = NO;
     
     //CONNECT DETECT SWITCH
-    [_detectFacesSwitch addTarget:self action:@selector(changeSwitch:) forControlEvents:UIControlEventValueChanged];
+    if (@available(iOS 11.0, *)) {
+        //ENABLE FACE DETECTION
+        [_detectFacesSwitch addTarget:self action:@selector(changeSwitch:) forControlEvents:UIControlEventValueChanged];
+    } else {
+        //DISABLE FACE DETECTION
+        [_detectFacesSwitch setEnabled:FALSE];
+    }
+    
+    
     
     //Control Received from WS
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(controlMessageReceived:) name:@"controlMsgReceived" object:nil];
@@ -90,6 +98,12 @@
     of_pointer->syncWithVisionTab(_selectedIndex);
     [self.view addSubview:[_vViews objectAtIndex:_selectedIndex]];
      NSLog(@"width frame %f",((UIView*)[_vViews objectAtIndex:_selectedIndex]).frame.size.width );
+}
+-(void)goBackToFirstScreen{
+    [[_vViews objectAtIndex:_selectedIndex] removeFromSuperview];
+    _selectedIndex = 0;
+    of_pointer->syncWithVisionTab(_selectedIndex);
+    [self.view addSubview:[_vViews objectAtIndex:_selectedIndex]];
 }
 -(IBAction)changeCamera:(id)sender{
     printf("%d\n",(int)_frontBackCameraControl.selectedSegmentIndex);
@@ -223,6 +237,7 @@
                          NSLog(@"%d",newSize);
                          [_vContainer setFrame:CGRectMake( ([UIScreen mainScreen].bounds.size.width/2)- (newSize/2),_vContainer.frame.origin.y   ,newSize,_vContainer.frame.size.height )];
                          [_blurSlider setAlpha:0.3];
+                         [_aeLockSwitch setAlpha:0.3];
                      }
      
                      completion:^(BOOL finished){
@@ -263,6 +278,7 @@
                          
                          [_vContainer setFrame:CGRectMake( ([UIScreen mainScreen].bounds.size.width/2)- (newSize/2),_vContainer.frame.origin.y   ,newSize ,_vContainer.frame.size.height )];
                          [_blurSlider setAlpha:1.0];
+                         [_aeLockSwitch setAlpha:1.0];
                      }
      
                      completion:^(BOOL finished){
@@ -324,6 +340,27 @@
     else if([[dict objectForKey:@"m"] isEqualToString:@"save"])
     {
         of_pointer->saveSnapshot();
+    }
+    else if([[dict objectForKey:@"m"] isEqualToString:@"cam"])
+    {
+        int camId = [[dict objectForKey:@"id"] intValue];
+        if(camId<2 && camId>=0)
+        {
+            of_pointer->setCameraID(camId);
+            _frontBackCameraControl.selectedSegmentIndex = camId;
+        }
+    }
+    else if([[dict objectForKey:@"m"] isEqualToString:@"mCV"])
+    {
+        [self morphUIBlobDetect];
+        [_detectFacesSwitch setOn:NO];
+        [self goBackToFirstScreen];
+    }
+    else if([[dict objectForKey:@"m"] isEqualToString:@"mFac"])
+    {
+        [self morphUIFaceDetect];
+        [_detectFacesSwitch setOn:YES];
+        [self goBackToFirstScreen];
     }
 
 }

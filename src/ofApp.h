@@ -6,6 +6,7 @@
 #include "ofxOpenCv.h"
 #include "NetworkManager.h"
 #include "ofxCvHaarFinder.h"
+#include "ofxiOSFaceTracking.h"
 
 #define BLOBS 0
 #define BB   1
@@ -35,8 +36,8 @@ public:
     bool areVCsOpen = false;
     
     //SIZE
-    int collapsedVC;
-    int expandedVC;
+    int  collapsedVC;
+    int  expandedVC;
     void openVC(int idn);
     void collapseVCs();
     
@@ -59,39 +60,42 @@ public:
     
     
     ofVideoGrabber videoFeed;
-    int cameraID = 0;
-    void setCameraID(int newCameraID);
+    int     cameraID = 0;
+    void    setCameraID(int newCameraID);
     
     ofImage workingImage;
     ofImage colorBackground;
     ofImage videoCurrentFrame;
     
-    ofxCvColorImage rawImage;
-    ofxCvColorImage backgroundImage;
+    ofxCvColorImage     rawImage;
+    ofxCvColorImage     backgroundImage;
     
     ofxCvGrayscaleImage bgGrayImage, grayImage, thresholdImage;
     ofxCvContourFinder  contourFinder;
     
-    ofxCvHaarFinder finder;
-    bool isHaarActive = false;
+    bool isFaceTracking = false;
     void setFaceDetect(bool faceDetect);
 
+    ofxiOSFaceTracking* faceT;
+    int numOfFaces = 0;
     
     //INTERFACE
-    void syncWithVisionTab(int tagIndex);
-    int indexVizState = 0;
-    int isBackgroundCaptured = false;
-    bool isDilateActive = false;
-    void captureBackground();
-    void removeBackground();
-    UIImage* UIImageFromOFImage( ofImage & img );
+    void    syncWithVisionTab(int tagIndex);
+    int     indexVizState        = 0;
+    int     isBackgroundCaptured = false;
+    bool    isDilateActive       = false;
+    void    captureBackground();
+    void    removeBackground();
     
-    UIImage* UIImageFromOFImage( ofxCvGrayscaleImage img );
-    UIImage* convertBitmapRGBA8ToUIImage(unsigned char * bufferData,float wtmp,float htmp);
+    UIImage*    UIImageFromOFImage( ofImage & img );
+    CGImageRef  CGImageRefFromOFImage( ofxCvColorImage & img );
+    UIImage*    UIImageFromOFImage( ofxCvGrayscaleImage img );
+    UIImage*    convertBitmapRGBA8ToUIImage(unsigned char * bufferData,float wtmp,float htmp);
     
-    int currentSizeSnapshotButton = 22;
-    const int normalSizeSnapshotButton = 22;
-    ofImage imgToSave;
+    //SAVE SNAPSHOT
+    int         currentSizeSnapshotButton = 22;
+    const int   normalSizeSnapshotButton = 22;
+    ofImage     imgToSave;
     void saveSnapshot();
     
     //CAMERA CONTROLS
@@ -104,9 +108,8 @@ public:
     float intervalSendWS        = 0.5;
     float intervalSendOSC       = 0.5;
     int   sendItem              = BB;
-    void setSendItem(int switchItem);
+    void  setSendItem(int switchItem);
     
-
 };
 
 
