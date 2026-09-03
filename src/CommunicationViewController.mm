@@ -22,7 +22,7 @@
 {
     ofApp* of_pointer_CVC;
 }
-@synthesize arrayFields;
+
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -50,7 +50,6 @@
     [self.view addSubview:_cViews[_indexOSCWebS]];
     [self updateLabelIP];
     
-    arrayFields = [NSArray arrayWithObjects: _oscPortField,_oscAddressField,_oscIPAddressField,_oscFrequencyField,_websocketPortField,_websocketFrequencyField, nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateWSServerStatus:) name:@"wsServerUpdate" object:nil];
     
     
@@ -66,6 +65,9 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(detectFacesDisabled) name:@"detectFacesDisabled" object:nil];
     [_sendingFacesLabel setEnabled:NO];
     [_sendingFacesLabel setAlpha:0.0];
+    
+    _arrayFields = [NSArray arrayWithObjects: _oscPortField,_oscAddressField,_oscIPAddressField,_oscFrequencyField,_websocketPortField,_websocketFrequencyField, nil];
+    
 }
 -(void)detectFacesEnabled{
     [_sendingFacesLabel setEnabled:YES];
@@ -151,7 +153,6 @@
 -(IBAction)changePort:(id)sender{
     UIAlertView *av = [[UIAlertView alloc]initWithTitle:@"Title" message:@"Please enter someth" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"OK", nil];
     av.alertViewStyle = UIAlertViewStylePlainTextInput;
-    //[av textFieldAtIndex:0].delegate = self;
     [av show];
 }
 #pragma mark OVERRIDE
@@ -159,9 +160,9 @@
 -(void)collapseVC{
     [super collapseVC];
     
-    for(int i=0;i<[arrayFields count];i++)
+    for(int i=0;i<[_arrayFields count];i++)
     {
-        [[arrayFields objectAtIndex:i] resignFirstResponder];
+        [[_arrayFields objectAtIndex:i] resignFirstResponder];
     }
     _isKeyboardOut = NO;
 }
@@ -191,9 +192,9 @@
 }
 
 -(void)dismissKeyboard{
-    for(int i=0;i<[arrayFields count];i++)
+    for(int i=0;i<[_arrayFields count];i++)
     {
-        [[arrayFields objectAtIndex:i] resignFirstResponder];
+        [[_arrayFields objectAtIndex:i] resignFirstResponder];
     }
     _isKeyboardOut = NO;
     [UIView animateWithDuration:0.2

@@ -1,4 +1,3 @@
-ofxCv
-ofxFaceTracker
 ofxFractalGeometry
 ofxOpenCv
+ofxiOSFaceTracking

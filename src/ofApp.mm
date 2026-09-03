@@ -57,17 +57,24 @@ void ofApp::setup(){
     videoFeed.getGrabber<ofxiOSVideoGrabber>()->setAutofocusWithPointOfInterest(ofPoint(0.5,0.5));
     
     
-    //HAAR FINDER
-    finder.setup("haarcascade_frontalface_alt.xml");
+    //FACE TRACKER
+    faceT = new ofxiOSFaceTracking();
     
     ofSetCircleResolution(128);
-//    ofEnableAntiAliasing();
     ofSetFrameRate(30);
-    printf("width %d,%d height %d %d",ofGetWidth(),frameW,ofGetHeight(), frameH);
+    
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+    if(currentSizeSnapshotButton>normalSizeSnapshotButton)
+    {
+        currentSizeSnapshotButton = currentSizeSnapshotButton-(currentSizeSnapshotButton*0.05);
+    }
+    else
+    {
+        currentSizeSnapshotButton = normalSizeSnapshotButton;
+    }
     
     videoFeed.update();
     
@@ -76,26 +83,47 @@ void ofApp::update(){
         
         rawImage.setFromPixels( videoFeed.getPixels() );
         
-        if(isHaarActive)
+        if(isFaceTracking)
         {
-            finder.findHaarObjects(rawImage.getPixels());
+            CGImageRef ref = CGImageRefFromOFImage(rawImage);
+            faceT->detectFaces(ref);
             
-            string json = "{\"m\":\"f\",\"a\":[";
-            for(unsigned int i = 0; i < finder.blobs.size(); i++) {
-                ofRectangle rTmp = finder.blobs[i].boundingRect;
-                
-                json+= ((i==0)?"[":",[");
-                json+=ofToString(rTmp.x)+",";
-                json+=ofToString(rTmp.y)+",";
-                json+=ofToString(rTmp.width)+",";
-                json+=ofToString(rTmp.height)+"]";
-            }
-            json+="]}";
-            if(ofGetElapsedTimef()-timeSinceLastWSSent >intervalSendWS)
+            //Print on FBO
+            fbo.begin();
+            rawImage.draw(0, 0);
+            ofNoFill();
+            ofSetColor(67  ,  159,    214        );
+            
+            for(int i=0;i<faceT->faces->size();i++)
             {
+                ofRectangle rectTmp = faceT->faces->at(i);
+                ofDrawRectangle((rectTmp.x)*rawImage.width,(rectTmp.y)*rawImage.height,(rectTmp.width)*rawImage.width,(rectTmp.height)*rawImage.height);
+            }
+            fbo.end();
+            
+            
+            //SEND JSON To Processing
+            if(ofGetElapsedTimef()-timeSinceLastWSSent >intervalSendWS && numOfFaces>0)
+            {
+                
+                //build json
+                string json = "{\"m\":\"f\",\"a\":[";
+                for(int i=0;i<faceT->faces->size();i++)
+                {
+                    ofRectangle rTmp = faceT->faces->at(i);
+                    
+                    json+= ((i==0)?"[":",[");
+                    json+=ofToString(rTmp.x)+",";
+                    json+=ofToString(rTmp.y)+",";
+                    json+=ofToString(rTmp.width)+",";
+                    json+=ofToString(rTmp.height)+"]";
+                }
+                json+="]}";
+                //send json
                 timeSinceLastWSSent = ofGetElapsedTimef();
                 [[NetworkManager sharedManager] sendMessage:[NSString stringWithUTF8String:json.c_str()]];
             }
+            numOfFaces = faceT->faces->size();
             return;
         }
         
@@ -212,10 +240,7 @@ void ofApp::update(){
         fbo.end();
     }
    
-    if(currentSizeSnapshotButton>normalSizeSnapshotButton)
-    {
-        currentSizeSnapshotButton = currentSizeSnapshotButton-(currentSizeSnapshotButton*0.05);
-    }
+   
     
 }
 
@@ -223,18 +248,7 @@ void ofApp::update(){
 void ofApp::draw(){
     ofBackground(255);
     ofSetHexColor(0xffffff);
-    if(isHaarActive)
-    {
-        rawImage.draw(0, 0);
-        ofNoFill();
-        ofSetHexColor(0xff00ff);
-        for(unsigned int i = 0; i < finder.blobs.size(); i++) {
-            ofRectangle cur = finder.blobs[i].boundingRect;
-            
-            ofDrawRectangle(cur.x, cur.y, cur.width, cur.height);
-        }
-        return;
-    }
+
     fbo.draw(0, 0,frameW,frameH);
     
     //BUTTON
@@ -445,6 +459,7 @@ void ofApp::removeBackground(){
 void ofApp::deviceOrientationChanged(int newOrientation){
     
 }
+#pragma mark OF to UI
 //--------------------------------------------------------------
 UIImage* ofApp::UIImageFromOFImage( ofImage & img ){
     int width = img.getWidth();
@@ -475,7 +490,30 @@ UIImage* ofApp::UIImageFromOFImage( ofImage & img ){
     return uimg;
     
 }
-
+//--------------------------------------------------------------
+CGImageRef ofApp::CGImageRefFromOFImage( ofxCvColorImage & img ){
+    int width = img.getWidth();
+    int height =img.getHeight();
+    
+    int nrOfColorComponents = 3;
+    
+    int bitsPerColorComponent = 8;
+    int rawImageDataLength = width * height * nrOfColorComponents;
+    BOOL interpolateAndSmoothPixels = NO;
+    CGBitmapInfo bitmapInfo = kCGBitmapByteOrderDefault;
+    CGColorRenderingIntent renderingIntent = kCGRenderingIntentDefault;
+    CGDataProviderRef dataProviderRef;
+    CGColorSpaceRef colorSpaceRef;
+    CGImageRef imageRef;
+    
+    GLubyte *rawImageDataBuffer =  (unsigned char*)(img.getPixels().getData());
+    dataProviderRef = CGDataProviderCreateWithData(NULL,  rawImageDataBuffer/*&img.getPixels()*rawImageDataBuffer*/, rawImageDataLength, nil);
+    colorSpaceRef = CGColorSpaceCreateDeviceRGB();
+    imageRef = CGImageCreate(width, height, bitsPerColorComponent, bitsPerColorComponent * nrOfColorComponents, width * nrOfColorComponents, colorSpaceRef, bitmapInfo, dataProviderRef, NULL, interpolateAndSmoothPixels, renderingIntent);
+    
+    return imageRef;
+    
+}
 //--------------------------------------------------------------
 UIImage* ofApp::UIImageFromOFImage(ofxCvGrayscaleImage img ){
     int width = img.getWidth();
@@ -509,11 +547,11 @@ UIImage* ofApp::UIImageFromOFImage(ofxCvGrayscaleImage img ){
 void ofApp::setFaceDetect(bool faceDetect){
     if(faceDetect)
     {
-        isHaarActive = true;
+        isFaceTracking = true;
     }
     else
     {
-        isHaarActive = false;
+        isFaceTracking = false;
     }
 }
 UIImage* ofApp::convertBitmapRGBA8ToUIImage(unsigned char * bufferData,float wtmp,float htmp) {

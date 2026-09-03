@@ -84,5 +84,21 @@ void keyPressed()
   {
     wsc.sendMessage("{\"m\":\"save\"}");
   }
+  else if (key == 'p')
+  {
+    wsc.sendMessage("{\"m\":\"mFac\"}");
+  }
+  else if (key == 'l')
+  {
+    wsc.sendMessage("{\"m\":\"mCV\"}");
+  }
+   else if (key == 'o')
+  {
+    wsc.sendMessage("{\"m\":\"cam\",\"id\":1}");
+  }
+   else if (key == 'k')
+  {
+    wsc.sendMessage("{\"m\":\"cam\",\"id\":0}");
+  }
   
 }
